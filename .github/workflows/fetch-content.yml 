@@ -1,35 +1,34 @@
 name: Fetch Content
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'   # every 15 minutes
   workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
 
 jobs:
-  fetch:
+  aggregate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
           cache: 'pnpm'
-
+      
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8
-
-      - name: Install dependencies
-        working-directory: scripts/aggregation
-        run: pnpm install --frozen-lockfile
-
-      - name: Run aggregation
-        working-directory: scripts/aggregation
+      
+      - name: Install deps
+        working-directory: ./scripts/aggregation
+        run: pnpm install
+      
+      - name: Fetch content
+        working-directory: ./scripts/aggregation
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

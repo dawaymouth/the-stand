@@ -2,33 +2,32 @@ name: Fetch Content
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/15 * * * *'   # every 15 minutes
   workflow_dispatch:
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'pnpm'
-          cache-dependency-path: scripts/aggregation/pnpm-lock.yaml
-      
+
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 8
-      
+
       - name: Install dependencies
         working-directory: scripts/aggregation
         run: pnpm install --frozen-lockfile
-      
+
       - name: Run aggregation
         working-directory: scripts/aggregation
         env:
